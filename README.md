@@ -1,59 +1,57 @@
 # my-stock-team
 
-국내 **상업용 부동산 관점**의 종목 리서치를 팀으로 수행하는 Claude Code 플러그인입니다.
-애널리스트 서브에이전트 5종, KB 디자인 PPTX 리포트 스킬, 리서치 오케스트레이션 커맨드를 묶었습니다.
-
-## 구성
-
-```
-my-stock-team/
-├── .claude-plugin/
-│   ├── plugin.json          # 플러그인 매니페스트 (name: my-stock-team, v1.0.0)
-│   └── marketplace.json     # 설치 카탈로그
-├── agents/                  # 애널리스트 서브에이전트 5종
-│   ├── fundamental-analyst.md       # 재무·실적·공시 (DART)
-│   ├── market-technical-analyst.md  # 주가·추세·변동률 (FinanceDataReader)
-│   ├── news-sentiment-analyst.md    # 뉴스·시장 심리 (웹)
-│   ├── risk-manager.md              # 리스크 종합·유동성 (pykrx)
-│   └── report-quality-auditor.md    # 전달 전 품질 검증
-├── skills/
-│   └── report-pptx/         # 리서치 .md → KB 디자인 PPTX
-│       ├── SKILL.md
-│       └── render.py
-└── commands/
-    └── research.md          # /research <종목명> — 전체 흐름 오케스트레이션
-```
+종목명만 던지면 **애널리스트 5명이 협업해 리서치를 쓰고, 검증 후 KB 디자인 PPTX 리포트까지 만들어 주는** Claude Code 플러그인입니다. (상업용 부동산 관점의 종목 분석 팀)
 
 ## 설치
 
 ```
-# 1) 마켓플레이스 등록 (이 폴더 경로 또는 git 저장소)
-/plugin marketplace add ./my-stock-team
-
-# 2) 설치
+/plugin marketplace add yonghun-ref/my-stock-team
 /plugin install my-stock-team@my-stock-team
 ```
 
-## 사용
+## 사용 예시
+
+Claude Code에서 이렇게 말하면 됩니다:
 
 ```
-/research 율촌화학            # 분야별 분석(병렬) → 리스크 종합 → 저장 → 검증 → PPTX
-/report-pptx 율촌화학         # 이미 작성된 reports/율촌화학.md → reports/율촌화학.pptx
+율촌화학 분석해줘
 ```
 
-개별 애널리스트는 "삼성전자 최근 공시 분석해줘"처럼 자연어로 요청하면 자동 위임됩니다.
+그러면 팀이 순서대로 일합니다:
 
-## 사전 준비 (사용자 환경)
+1. **펀더멘털 / 시장·기술 / 뉴스·심리** 애널리스트가 동시에 분석 (재무·주가추세·뉴스)
+2. **리스크 매니저**가 결과를 종합해 핵심 리스크와 의견을 정리
+3. `reports/율촌화학.md`로 저장
+4. **검증 애널리스트**가 출처·수치·가드레일을 최종 점검
+5. **report-pptx 스킬**이 `reports/율촌화학.pptx`(KB 디자인, 맑은 고딕)로 내보내기
 
-- Python 패키지: `python-pptx`, `OpenDartReader`/`requests`, `FinanceDataReader`, `pykrx`
-- **DART OpenAPI 키**: 본 플러그인은 비밀값을 포함하지 않습니다. 사용자가 자신의 프로젝트
-  `.env`에 `DART_KEY=<발급키>`를 직접 설정해 사용합니다. (키 발급: opendart.fss.or.kr)
+이미 작성된 리포트만 PPTX로 바꾸려면 `율촌화학 PPTX로 만들어줘`처럼 요청하면 됩니다.
 
-## 가드레일 (모든 리포트 항상 적용)
+## ⚠️ DART API 키는 각자 발급해 넣으세요
 
-- 모든 수치에 `(출처: 데이터명, 연도/날짜)` 병기 — 출처 없는 수치는 쓰지 않음
-- 데이터 미확보 시 "확인 불가", 출처 불명 뉴스·루머는 "미확인"
-- 매수/매도/보유·목표가·비중 단정 금지 — 판단 근거(의사결정 지원)까지만
-- 첫머리 "무료 공개 데이터 기반 학습용" 한 줄, 끝에 데이터 출처·기준일 목록
+재무·공시 분석(펀더멘털 애널리스트)은 **DART OpenAPI 키**가 필요합니다. **이 플러그인에는 키가 들어있지 않으니, 각자 발급해서 본인 프로젝트에 설정해야 합니다.**
 
-본 플러그인의 산출물은 학습용 분석 자료이며, 투자 권유나 자문이 아닙니다.
+1. https://opendart.fss.or.kr 에서 무료로 API 키를 발급받습니다.
+2. 작업 중인 프로젝트 폴더에 `.env` 파일을 만들고 아래 한 줄을 넣습니다:
+   ```
+   DART_KEY=발급받은_본인_키
+   ```
+3. `.env`는 깃에 올리지 마세요(키 노출 방지).
+
+> 주가·추세, 뉴스·심리 분석은 키 없이도 동작합니다. DART 키는 재무·공시 부분에만 필요합니다.
+
+## 필요한 Python 패키지
+
+```
+pip install python-pptx FinanceDataReader pykrx requests
+```
+
+## 구성
+
+- `agents/` — 펀더멘털 · 시장/기술 · 뉴스/센티먼트 · 리스크 · 검증 애널리스트 5종
+- `skills/report-pptx/` — 리서치 `.md` → KB 디자인 PPTX 변환
+- `commands/research.md` — `/research <종목명>` 전체 흐름 오케스트레이션
+
+---
+
+본 플러그인의 산출물은 **무료 공개 데이터 기반 학습용 분석 자료**이며, 투자 권유나 자문이 아닙니다.
