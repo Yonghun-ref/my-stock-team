@@ -1,0 +1,12 @@
+# 비밀값/환경 파일 차단
+.env
+*.env
+.env.*
+*.key
+*.pem
+secrets.*
+
+# 캐시/산출물
+__pycache__/
+*.pyc
+reports/.cache/

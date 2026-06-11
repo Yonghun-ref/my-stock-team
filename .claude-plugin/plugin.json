@@ -1,0 +1,16 @@
+{
+  "name": "my-stock-team",
+  "version": "1.0.0",
+  "description": "국내 상업용 부동산 관점의 종목 리서치 팀 — 펀더멘털·시장/기술·뉴스/센티먼트·리스크·검증 애널리스트 5종과 KB 디자인 PPTX 리포트 스킬, 리서치 오케스트레이션 커맨드를 묶은 플러그인입니다.",
+  "author": {
+    "name": "KB Stock Team"
+  },
+  "keywords": [
+    "research",
+    "real-estate",
+    "stock",
+    "analyst",
+    "pptx",
+    "korean"
+  ]
+}

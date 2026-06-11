@@ -1,0 +1,19 @@
+{
+  "name": "my-stock-team",
+  "owner": {
+    "name": "KB Stock Team"
+  },
+  "metadata": {
+    "description": "상업용 부동산 종목 리서치 팀 플러그인 카탈로그",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "my-stock-team",
+      "source": "./",
+      "description": "펀더멘털·시장/기술·뉴스/센티먼트·리스크·검증 애널리스트 5종 + KB 디자인 PPTX 리포트 스킬 + 리서치 오케스트레이션 커맨드.",
+      "version": "1.0.0",
+      "category": "research"
+    }
+  ]
+}
